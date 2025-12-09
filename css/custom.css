@@ -1,0 +1,57 @@
+/* 默认（白天模式） */
+body {
+  background-color: white;
+  color: black;
+}
+
+[data-theme="dark"] body {
+  background-color: #121212;
+  color: white;
+}
+
+.pjax-leave-active {
+  opacity: 0;
+  background-color: inherit;
+  /* 使用继承的背景色 */
+}
+
+.pjax-enter-active {
+  transition: opacity 1s cubic-bezier(0.22, 0.61, 0.36, 1), background-color 1s ease-in-out, transform 1s ease-in-out;
+  opacity: 1;
+  background-color: inherit;
+  /* 使用继承的背景色 */
+}
+
+/*侧边卡片的透明度 */
+:root {
+  --card-bg: rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="dark"] {
+  --card-bg: rgba(255, 255, 255, 0.2);
+}
+
+/* 让非主页页眉透明以呈现与主页一致的一图流效果 */
+header#page-header.not-home-page {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/* 确保背景层位于页眉下方 */
+#web_bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-position: center top;
+  background-size: cover;
+  z-index: 0;
+}
+
+/* 页眉和主体内容位于背景之上 */
+.page, header#page-header {
+  position: relative;
+  z-index: 2;
+}
