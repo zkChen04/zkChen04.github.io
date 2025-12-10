@@ -1,17 +1,152 @@
 /* 文章页背景 */
 .layout_post>#post {
-    /* 以下代表透明度为0.7 可以自行修改*/
-    background: rgba(255,255,255,.6);
+  /* 以下代表透明度为0.7 可以自行修改，已迁移为变量支持 */
+  background: var(--content-bg-post, rgba(255,255,255,.7));
 }
  
 /* 所有页面背景 */
-#aside_content .card-widget, #recent-posts>.recent-post-item, .layout_page>div:first-child:not(.recent-posts), .layout_post>#page, .layout_post>#post, .read-mode .layout_post>#post{
-    /* 以下代表透明度为0.7 */
-    background: rgba(255,255,255,.6);
-}
-/*侧边卡片的透明度 */
+/* 通用及分页面卡片背景（分别配置首页与文章页） */
 :root {
-  --card-bg: rgba(255, 255, 255, .6);
+  --card-bg-default: rgba(255, 255, 255, .8);
+  --card-bg-home: rgba(255, 255, 255, .7); /* 首页侧边卡片透明度，按需修改 */
+  --card-bg-post: rgba(255, 255, 255, .7); /* 文章页侧边卡片透明度，按需修改 */
+  --card-bg-link: rgba(255, 255, 255, 0.7); /* 友情链接页侧边卡片透明度，按需修改 */
+  /* 中间博客内容（主体）背景：默认 / 首页 / 文章页 可分别配置 */
+  --content-bg-default: rgba(255, 255, 255, .96);
+  --content-bg-home: rgba(255, 255, 255, .7); /* 首页中间内容背景 */
+  --content-bg-post: rgba(255, 255, 255, 1); /* 文章页中间内容背景 */
+  --content-bg-link: rgba(255, 255, 255, 0); /* 友情链接页中间内容背景，按需修改 */
+}
+
+/* 将老主题中大量规则使用的 `--card-bg` 映射到我们新的分页面变量，
+   并在 `.page` / `.post` 上覆盖，使首页/文章页背景可独立控制。 */
+:root {
+  --card-bg: var(--card-bg-default);
+}
+.page {
+  --card-bg: var(--card-bg-home);
+  --content-bg: var(--content-bg-home);
+}
+.post {
+  --card-bg: var(--card-bg-post);
+  --content-bg: var(--content-bg-post);
+}
+/* 友情链接页面样式 */
+.page#page {
+  --card-bg: var(--card-bg-link);
+  --content-bg: var(--content-bg-link);
+}
+
+/* 侧边卡片：默认（回退） */
+#aside-content .card-widget, .aside-content .card-widget {
+  background: var(--card-bg-default);
+}
+
+/* 首页（page 容器）侧边卡片 */
+.page #aside-content .card-widget, .page .aside-content .card-widget {
+  background: var(--card-bg-home);
+}
+
+/* 文章页（post 容器）侧边卡片 */
+.post #aside-content .card-widget, .post .aside-content .card-widget {
+  background: var(--card-bg-post);
+}
+
+/* 中间内容（默认回退）
+   扩展匹配：针对文章页主要容器（article.container / #article-container / #post）
+   以及首页的 recent-posts 和 page 容器，保证可单独设置透明度。 */
+/* 回退（更广泛匹配，谨慎使用以避免影响其他位置） */
+#content-inner > .recent-posts,
+#recent-posts,
+#content-inner #page,
+#page,
+#content-inner #post,
+#post,
+article.container,
+#article-container,
+.container.post-content,
+.post-content {
+  background: var(--content-bg-default);
+}
+
+/* 首页中间内容（更具体） */
+.page:not(#page) #content-inner #page,
+.page:not(#page) #page,
+.page:not(#page) article.container,
+.page:not(#page) .container.post-content {
+  background: var(--content-bg-home);
+}
+/* 友情链接页中间内容 */
+.page#page #content-inner #page,
+.page#page #page,
+.page#page article.container,
+.page#page .container.post-content,
+.page#page #article-container.container,
+.page#page .container.flink,
+#article-container.container,
+.flink,
+.flink-list {
+  background: var(--content-bg-link) !important;
+}
+/* 首页文章列表容器设置为完全透明，避免与文章卡片背景叠加 */
+.page #content-inner > .recent-posts,
+.page #recent-posts {
+  background: transparent;
+}
+
+/* 文章页中间内容（更具体） */
+.post #content-inner #post,
+.post #post,
+.post article.container,
+.post #article-container,
+.post .container.post-content,
+.post .post-content {
+  background: var(--content-bg-post);
+}
+
+/* 覆盖主题里大量使用 `--card-bg` 的通用选择器，避免把整个布局或列表项都变成同一矩形
+   我们在更具体的 `.page` / `.post` 上指定使用 content-bg，这样主内容与侧边卡片可以独立控制。 */
+/* 全局回退（尽量保守） */
+.layout > div:first-child:not(.nc),
+#recent-posts .recent-post-item,
+#article-container .shuoshuo-item,
+.layout .pagination > *:not(.space) {
+  background: var(--content-bg-default);
+}
+
+/* 首页覆盖：把这些元素设为首页主体背景（半透明等） */
+.page:not(#page) .layout > div:first-child:not(.nc),
+.page:not(#page) #recent-posts .recent-post-item,
+.page:not(#page) #article-container .shuoshuo-item,
+.page:not(#page) .layout .pagination > *:not(.space) {
+  background: var(--content-bg-home);
+}
+
+/* 友情链接页覆盖：把这些元素设为友情链接页主体背景 */
+.page#page .layout > div:first-child:not(.nc),
+.page#page .page .layout > div:first-child:not(.nc),
+.page#page .page #recent-posts .recent-post-item,
+.page#page #article-container .shuoshuo-item,
+.page#page .layout .pagination > *:not(.space),
+.page#page #article-container .flink,
+.page#page .flink-list {
+  background: var(--content-bg-link) !important;
+}
+
+/* 友情链接项样式 */
+.flink-list-item {
+  background: rgba(255, 255, 255, 0) !important;
+  border-radius: 8px !important;
+  padding: 10px !important;
+  margin: 10px 0 !important;
+}
+
+/* 文章页覆盖：把这些元素设为文章主体背景（通常不透明） */
+.post .layout > div:first-child:not(.nc),
+.post #recent-posts .recent-post-item,
+.post #article-container .shuoshuo-item,
+.post .layout .pagination > *:not(.space) {
+  background: var(--content-bg-post);
 }
 /* 页脚透明 */
 #footer {
