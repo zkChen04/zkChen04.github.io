@@ -8,7 +8,9 @@
 
 document.addEventListener('DOMContentLoaded', function () {
   // 只在归档页运行
-  if (!location.pathname.includes('/archives/')) return;
+  const archivePage = document.getElementById('archive');
+  // 精确匹配归档页面路径，避免在标签等子页面执行
+  if (!archivePage || !/^\/archives\/?$/.test(location.pathname)) return;
 
   const items = document.querySelectorAll('.article-sort-item');
   let lastMonth = '';

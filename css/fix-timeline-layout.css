@@ -1,0 +1,45 @@
+/* * 修复 Butterfly 主题标签/归档页面时间轴错位问题 
+ * 目标类：.article-sort-item
+ */
+
+/* 1. 强制统一所有文章卡片的宽度和位置 */
+.article-sort-item {
+  /* 重置可能导致错位的 margin */
+  margin: 0 0 20px 0 !important;
+  /* 确保宽度一致，避免首个元素宽度不同导致后续元素挤压 */
+  width: 100% !important;
+  /* 移除可能存在的浮动或定位偏移 */
+  float: none !important;
+  transform: none !important;
+}
+
+/* 2. 针对首个元素的特殊修正（如果主题默认对最新的文章有特殊放大处理） */
+.article-sort-item:first-child {
+  /* 强制首个元素与后续元素保持一致的布局逻辑 */
+  margin-top: 0 !important;
+}
+
+/* 3. 修正时间轴左侧线条的对齐 */
+.article-sort {
+  /* 确保左侧内边距一致，容纳时间轴线 */
+  padding-left: 20px !important;
+  /* 确保时间轴线位置正确 */
+  border-left: 2px solid var(--light-blue); /* 使用主题变量或指定颜色 */
+}
+
+/* 4. 针对图片缩略图的容器修正 (如果有图片导致挤压) */
+.article-sort-item-img {
+  /* 保持图片容器在左侧的标准位置 */
+  left: -35px !important; 
+  /* 如果你的时间轴点是圆点而不是图片，这里可能需要调整为 left: -XXpx */
+}
+
+/* 5. 手机端适配修正 (通常手机端布局不同) */
+@media screen and (max-width: 768px) {
+  .article-sort-item {
+    margin-left: 0 !important;
+  }
+  .article-sort {
+    padding-left: 10px !important;
+  }
+}
