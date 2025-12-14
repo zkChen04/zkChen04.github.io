@@ -1,0 +1,259 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>时钟树的基本原理 | zk`Blog</title><meta name="author" content="thbzz"><meta name="copyright" content="thbzz"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="结合STM32F1平台，介绍时钟树的基本原理和配置过程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="时钟树的基本原理">
+<meta property="og:url" content="https://www.thbzzxx.top/_posts/36808/index.html">
+<meta property="og:site_name" content="zk&#96;Blog">
+<meta property="og:description" content="结合STM32F1平台，介绍时钟树的基本原理和配置过程">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.thbzzxx.top/img/pagePIC/%E5%A4%B4%E5%83%8F.png">
+<meta property="article:published_time" content="2018-01-06T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-12-12T18:30:29.931Z">
+<meta property="article:author" content="thbzz">
+<meta property="article:tag" content="MCU理解">
+<meta property="article:tag" content="时钟树">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.thbzzxx.top/img/pagePIC/%E5%A4%B4%E5%83%8F.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "时钟树的基本原理",
+  "url": "https://www.thbzzxx.top/_posts/36808/",
+  "image": "https://www.thbzzxx.top/img/pagePIC/%E5%A4%B4%E5%83%8F.png",
+  "datePublished": "2018-01-06T16:00:00.000Z",
+  "dateModified": "2025-12-12T18:30:29.931Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "thbzz",
+      "url": "https://www.thbzzxx.top"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.ico"><link rel="canonical" href="https://www.thbzzxx.top/_posts/36808/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="stylesheet" href="/css/index.css?v=5.5.2"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":300,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: false,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '时钟树的基本原理',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="/css/transpancy.css"><link rel="stylesheet" href="/css/fix-timeline-layout.css"><meta name="generator" content="Hexo 8.1.1"></head><body style="visibility: hidden; overflow: hidden;"></body><body><div id="web_bg" style="background-image: url(/./img/pagePIC/%E4%B8%BB%E9%A1%B5top.png);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/pagePIC/%E5%A4%B4%E5%83%8F.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">51</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">11</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-bookmark"></i><span> 文章</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/comment/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background: transparent;"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">zk`Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">时钟树的基本原理</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-bookmark"></i><span> 文章</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/comment/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">时钟树的基本原理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2018-01-06T16:00:00.000Z" title="发表于 2018-01-07 00:00:00">2018-01-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-12-12T18:30:29.931Z" title="更新于 2025-12-13 02:30:29">2025-12-13</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/MCU%E7%90%86%E8%A7%A3/">MCU理解</a></span></div><div class="meta-secondline"></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><blockquote>
+<p>本文主要从STM32F1平台出发，介绍时钟树的概念，结合时钟树的框图，详细讲解时钟树的基本原理和配置过程。</p>
+</blockquote>
+<h1 id="你可能会有的疑惑？"><a href="#你可能会有的疑惑？" class="headerlink" title="你可能会有的疑惑？"></a>你可能会有的疑惑？</h1><p>MCU的时钟树是跟着ARM的Cortex-M4架构走，还是跟着ST的F4系列走？<br>简单说，每款MCU的时钟树，都是芯片厂商为其“量身定制”的。ARM架构只是定义了内核需要哪些时钟信号以及如何与它们接口。而具体的时钟树配置，是由芯片厂商（ST）根据其具体的硬件资源和性能需求，进行定制的。</p>
+<h1 id="什么是时钟树？"><a href="#什么是时钟树？" class="headerlink" title="什么是时钟树？"></a>什么是时钟树？</h1><p>MCU内部有许多外设，这些外设需要不同的时钟信号来工作。而我们的晶振只能产生单一频率的主时钟信号，<br>为了满足这些外设的不同时钟需求，我们需要对这个主时钟信号进行分频、倍频或相位调整，生成不同频率的时钟信号，供给不同的外设使用。最终各个时钟线呈现出来的结构就像一棵树一样，所以被称为时钟树。</p>
+<h1 id="时钟源"><a href="#时钟源" class="headerlink" title="时钟源"></a>时钟源</h1><p><img src="/../../img/MCU%E7%90%86%E8%A7%A3/F4%E6%97%B6%E9%92%9F%E6%A0%91.png" alt="STM32F407时钟树"></p>
+<blockquote>
+<p>从图片可以看出来，STM32F4中有5个最重要的时钟源，为HSI、HSE、LSI、LSE、PLL。<br>其中PLL实际是分为两个时钟源，分别为主PLL和专用PLL。	讲解顺序是按图中蓝圈标示的顺序。<br>命名规则为：L代表Low，H代表High，S代表Speed,I代表Internal,E代表External。</p>
+</blockquote>
+<h2 id="LSI内部低速时钟"><a href="#LSI内部低速时钟" class="headerlink" title="LSI内部低速时钟"></a>LSI内部低速时钟</h2><p>RC振荡器，频率为32kHz左右。供独立看门狗和自动唤醒单元使用。</p>
+<h2 id="LSE外部低速时钟"><a href="#LSE外部低速时钟" class="headerlink" title="LSE外部低速时钟"></a>LSE外部低速时钟</h2><p>接频率为32.768kHz的石英晶体，这个主要是RTC的时钟源。</p>
+<h2 id="HSE外部高速时钟"><a href="#HSE外部高速时钟" class="headerlink" title="HSE外部高速时钟"></a>HSE外部高速时钟</h2><p>可接石英&#x2F;陶瓷谐振器，或者接外部时钟源，频率范围为4MHz~26MHz。HSE可以直接作为系统时钟或者PLL的输入。</p>
+<h2 id="HSI内部高速时钟"><a href="#HSI内部高速时钟" class="headerlink" title="HSI内部高速时钟"></a>HSI内部高速时钟</h2><p>RC振荡器，频率为16MHz。可以直接作为系统时钟或者用作PLL输入。</p>
+<h2 id="PLL锁相环倍频输出"><a href="#PLL锁相环倍频输出" class="headerlink" title="PLL锁相环倍频输出"></a>PLL锁相环倍频输出</h2><p>STM32F4有两个PLL：</p>
+<ol>
+<li>主PLL(PLL)由HSE或者HSI提供时钟信号，并具有两个不同的输出时钟。</li>
+</ol>
+<ul>
+<li>第一个输出PLLP用于生成高速的系统时钟(最高168MHz)。</li>
+<li>第二个输出PLLQ用于生成USB OTG FS的时钟(48MHz)，随机数发生器的时钟和SDIO时钟。</li>
+<li>专用PLL(PLLI2S)用于生成精确时钟，从而在I2S接口实现高品质音频性能。<br><strong>这里我们着重看看主PLL时钟第一个高速时钟输出PLLP的计算方法</strong>。</li>
+</ul>
+<ol>
+<li><strong>大概分析</strong>：主PLL的输入先经过一个分频系数为M的分频器成为了VCO的时钟输入，<br>（VCO是PLL的一部分，压控振荡器），然后再经过倍频系数为N的倍频器，<br>最后再经过一个分频系数为P（系统时钟的）或者Q（外设时钟）的分频器之后才生成主PLL时钟。</li>
+<li><strong>举例分析</strong>：<br>(1)假设HSE &#x3D; 8MHZ,我们选择了HSE作为PLL的时钟源，因为VCO的时钟必须要在1-2M之间，所以我们设置PLL_M &#x3D; 8M,得到PLL_VCO &#x3D; 1M.<br>(2)接着VCO输入时钟经过VCO倍频因子N倍频之后，成为了VCO的时钟输出，VCO时钟必须在192-432M之间，我们配置N &#x3D; 336，则VCO时钟输出为336M，VCO时钟输出后有3个分频因子。</li>
+</ol>
+<ul>
+<li>PLLCLK 分频因子 P </li>
+<li>时钟分频因子 Q</li>
+<li>分频因子 R（F446 才有，F407 没有）。</li>
+</ul>
+<ol start="3">
+<li>有关 PLL 的配置有一个专门的 RCC PLL 配置寄存器<strong>RCC_PLLCFGR</strong>，具体描述看手册即可。</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">VCOCLK_IN = PLLCLK_IN / M = HSE / <span class="number">8</span> = <span class="number">1</span>M</span><br><span class="line">VCOCLK_OUT = VCOCLK_IN * N = <span class="number">1</span>M * <span class="number">336</span> = <span class="number">336</span>M </span><br><span class="line">PLLCLK_OUT=VCOCLK_OUT/P=<span class="number">336</span>/<span class="number">2</span>=<span class="number">168</span>M  </span><br></pre></td></tr></table></figure>
+<h2 id="上面提到的系统时钟"><a href="#上面提到的系统时钟" class="headerlink" title="上面提到的系统时钟"></a>上面提到的系统时钟</h2><p>系统时钟是MCU的主要时钟源，它提供给所有的外设。系统时钟来源可以是：HSI、PLLCLK、HSE，具体的由时钟配置寄存器<strong>RCC_CFGR</strong> 的<strong>SW位</strong>配置。<br>我们这里设置系统时钟：SYSCLK &#x3D; PLLCLK &#x3D; 168M。如果系统时钟是由 HSE 经过 PLL 倍频之后的 PLLCLK 得到，当 HSE 出现故障的时候，系统时钟会切换为 HSI&#x3D;16M，直到 HSE 恢复正常为止。</p>
+<h2 id="AHB总线时钟HCLK"><a href="#AHB总线时钟HCLK" class="headerlink" title="AHB总线时钟HCLK"></a>AHB总线时钟HCLK</h2><p>系统时钟 SYSCLK 经过 AHB 预分频器分频之后得到时钟叫 AHB 总线时钟，即 HCLK。<br>分频因子可以是:[1,2,4,8,16,64,128,256,512]，具体的由时钟配置寄存器 <strong>RCC_CFGR</strong>的<strong>HPRE位</strong>设置。<br>片上大部分外设的时钟都是经过 HCLK 分频得到，至于 AHB 总线上的外设的时钟设置为多少，得等到我们使用该外设的时候才设置，我们这里只需设置好 APB 的时钟即可。我们这里设置为 1 分频，即 HCLK&#x3D;SYSCLK&#x3D;168M。</p>
+<h2 id="APB2总线时钟PCLK2"><a href="#APB2总线时钟PCLK2" class="headerlink" title="APB2总线时钟PCLK2"></a>APB2总线时钟PCLK2</h2><p>APB2 总线时钟 PCLK2 由 HCLK 经过高速 APB2 预分频器得到。<br>分频因子可以 是:[1,2,4,8,16]，具体由时钟配置寄存器<strong>RCC_CFGR</strong>的<strong>PPRE2位</strong>设置。<br>HCLK2 属于高速的总线时钟，片上高速的外设就挂载到这条总线上，比如全部的 GPIO、USART1、SPI1 等。<br>至于 APB2 总线上的外设的时钟设置为多少，得等到我们使用该外设的时候才设置。<br>我们这里只需设置好 APB2 的时钟即可。我们这里设置为2分频，即PCLK2 &#x3D; HCLK &#x2F;2&#x3D; 84M。</p>
+<h2 id="APB总线时钟PCLK1"><a href="#APB总线时钟PCLK1" class="headerlink" title="APB总线时钟PCLK1"></a>APB总线时钟PCLK1</h2><p>APB1 总线时钟 PCLK1 由 HCLK 经过低速 APB 预分频器得到，分频因子可以是:[1,2,4,8,16]<br>具体由时钟配置寄存器<strong>RCC_CFGR</strong>的<strong>PPRE1位</strong>设置。<br>HCLK1 属于低速的总线时钟，最高为 42M，片上低速的外设就挂载到这条总线上。<br>比如 USART2&#x2F;3&#x2F;4&#x2F;5、SPI2&#x2F;3，I2C1&#x2F;2 等。<br>至于 APB1 总线上的外设的时钟设置为多少，得等到我们使用该外设的时候才设置。<br>我们这里只需设置好 APB1 的时钟即可。我们这里设置为4分频，即PCLK1 &#x3D; HCLK&#x2F;4 &#x3D; 42M。</p>
+<h2 id="APBx定时器时钟"><a href="#APBx定时器时钟" class="headerlink" title="APBx定时器时钟"></a>APBx定时器时钟</h2><p><strong>这个配置定时器的时候，需要特别注意</strong><br>当APBx分频数为1的时候，对应定时器的时钟为APBx的时钟，否则对应定时器时钟都是APB总线的两倍。</p>
+<h1 id="SystemInit函数"><a href="#SystemInit函数" class="headerlink" title="SystemInit函数"></a>SystemInit函数</h1><p>在启动文件中，有一个名为 SystemInit 的函数，它是在单片机启动时被调用的。<br>这个函数的主要作用是初始化系统时钟，设置系统时钟源、分频器和倍频器。<br>在 SystemInit 函数中，我们可以个性化地配置系统时钟为我们需要的频率。</p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%97%B6%E9%92%9F%E6%A0%91/">时钟树</a><a class="post-meta__tags" href="/tags/MCU%E7%90%86%E8%A7%A3/">MCU理解</a></div><div class="post-share"><div class="social-share" data-image="/img/pagePIC/%E5%A4%B4%E5%83%8F.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/_posts/31488/" title="屏驱ST7789V_SPI开发"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">屏驱ST7789V_SPI开发</div></div><div class="info-2"><div class="info-item-1">记录屏驱ST7789V_SPI开发的过程</div></div></div></a><a class="pagination-related" href="/_posts/59193/" title="编译过程"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">编译过程</div></div><div class="info-2"><div class="info-item-1">结合ARM平台，将程序的编译、链接、安装和运行的基本原理和过程梳理一遍</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BD%A0%E5%8F%AF%E8%83%BD%E4%BC%9A%E6%9C%89%E7%9A%84%E7%96%91%E6%83%91%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">你可能会有的疑惑？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%97%B6%E9%92%9F%E6%A0%91%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">什么是时钟树？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%97%B6%E9%92%9F%E6%BA%90"><span class="toc-number">3.</span> <span class="toc-text">时钟源</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#LSI%E5%86%85%E9%83%A8%E4%BD%8E%E9%80%9F%E6%97%B6%E9%92%9F"><span class="toc-number">3.1.</span> <span class="toc-text">LSI内部低速时钟</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LSE%E5%A4%96%E9%83%A8%E4%BD%8E%E9%80%9F%E6%97%B6%E9%92%9F"><span class="toc-number">3.2.</span> <span class="toc-text">LSE外部低速时钟</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HSE%E5%A4%96%E9%83%A8%E9%AB%98%E9%80%9F%E6%97%B6%E9%92%9F"><span class="toc-number">3.3.</span> <span class="toc-text">HSE外部高速时钟</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HSI%E5%86%85%E9%83%A8%E9%AB%98%E9%80%9F%E6%97%B6%E9%92%9F"><span class="toc-number">3.4.</span> <span class="toc-text">HSI内部高速时钟</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PLL%E9%94%81%E7%9B%B8%E7%8E%AF%E5%80%8D%E9%A2%91%E8%BE%93%E5%87%BA"><span class="toc-number">3.5.</span> <span class="toc-text">PLL锁相环倍频输出</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8A%E9%9D%A2%E6%8F%90%E5%88%B0%E7%9A%84%E7%B3%BB%E7%BB%9F%E6%97%B6%E9%92%9F"><span class="toc-number">3.6.</span> <span class="toc-text">上面提到的系统时钟</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AHB%E6%80%BB%E7%BA%BF%E6%97%B6%E9%92%9FHCLK"><span class="toc-number">3.7.</span> <span class="toc-text">AHB总线时钟HCLK</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#APB2%E6%80%BB%E7%BA%BF%E6%97%B6%E9%92%9FPCLK2"><span class="toc-number">3.8.</span> <span class="toc-text">APB2总线时钟PCLK2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#APB%E6%80%BB%E7%BA%BF%E6%97%B6%E9%92%9FPCLK1"><span class="toc-number">3.9.</span> <span class="toc-text">APB总线时钟PCLK1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#APBx%E5%AE%9A%E6%97%B6%E5%99%A8%E6%97%B6%E9%92%9F"><span class="toc-number">3.10.</span> <span class="toc-text">APBx定时器时钟</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SystemInit%E5%87%BD%E6%95%B0"><span class="toc-number">4.</span> <span class="toc-text">SystemInit函数</span></a></li></ol></div></div></div></div></main><footer id="footer" style="background: transparent;"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2025 By thbzz</span></div><div class="footer_custom_text">Hi, welcome to my blog!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.2"></script><script src="/js/main.js?v=5.5.2"></script><div class="js-pjax"></div><script src="/js/custom.js"></script><script src="/js/archive_fold.js"></script><script src="/js/archive_month.js"></script><script src="/js/preload-top-img.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      true
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.2"></script></div></div></body></html>

@@ -5,6 +5,19 @@
     
     <entry>
       <title></title>
+      <link href="/_posts/3/"/>
+      <url>/_posts/3/</url>
+      
+        <content type="html"><![CDATA[<hr><h2 id="title-屏驱ST7789V-SPI开发description-tags-MCU驱动开发categories-MCU驱动开发top-img-transparentcopyright-falseabbrlink-31488date-2018-01-07-00-00-00"><a href="#title-屏驱ST7789V-SPI开发description-tags-MCU驱动开发categories-MCU驱动开发top-img-transparentcopyright-falseabbrlink-31488date-2018-01-07-00-00-00" class="headerlink" title="title: 屏驱ST7789V_SPI开发description:tags:  - MCU驱动开发categories: MCU驱动开发top_img: transparentcopyright: falseabbrlink: 31488date: 2018-01-07 00:00:00"></a>title: 屏驱ST7789V_SPI开发<br>description:<br>tags:<br>  - MCU驱动开发<br>categories: MCU驱动开发<br>top_img: transparent<br>copyright: false<br>abbrlink: 31488<br>date: 2018-01-07 00:00:00</h2>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title></title>
       <link href="/_posts/23/"/>
       <url>/_posts/23/</url>
       
@@ -317,19 +330,6 @@
     
     <entry>
       <title></title>
-      <link href="/_posts/3/"/>
-      <url>/_posts/3/</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title></title>
       <link href="/_posts/2/"/>
       <url>/_posts/2/</url>
       
@@ -486,6 +486,83 @@
     
     
     <entry>
+      <title>时钟树的基本原理</title>
+      <link href="/_posts/36808/"/>
+      <url>/_posts/36808/</url>
+      
+        <content type="html"><![CDATA[<blockquote><p>本文主要从STM32F1平台出发，介绍时钟树的概念，结合时钟树的框图，详细讲解时钟树的基本原理和配置过程。</p></blockquote><h1 id="你可能会有的疑惑？"><a href="#你可能会有的疑惑？" class="headerlink" title="你可能会有的疑惑？"></a>你可能会有的疑惑？</h1><p>MCU的时钟树是跟着ARM的Cortex-M4架构走，还是跟着ST的F4系列走？<br>简单说，每款MCU的时钟树，都是芯片厂商为其“量身定制”的。ARM架构只是定义了内核需要哪些时钟信号以及如何与它们接口。而具体的时钟树配置，是由芯片厂商（ST）根据其具体的硬件资源和性能需求，进行定制的。</p><h1 id="什么是时钟树？"><a href="#什么是时钟树？" class="headerlink" title="什么是时钟树？"></a>什么是时钟树？</h1><p>MCU内部有许多外设，这些外设需要不同的时钟信号来工作。而我们的晶振只能产生单一频率的主时钟信号，<br>为了满足这些外设的不同时钟需求，我们需要对这个主时钟信号进行分频、倍频或相位调整，生成不同频率的时钟信号，供给不同的外设使用。最终各个时钟线呈现出来的结构就像一棵树一样，所以被称为时钟树。</p><h1 id="时钟源"><a href="#时钟源" class="headerlink" title="时钟源"></a>时钟源</h1><p><img src="/../../img/MCU%E7%90%86%E8%A7%A3/F4%E6%97%B6%E9%92%9F%E6%A0%91.png" alt="STM32F407时钟树"></p><blockquote><p>从图片可以看出来，STM32F4中有5个最重要的时钟源，为HSI、HSE、LSI、LSE、PLL。<br>其中PLL实际是分为两个时钟源，分别为主PLL和专用PLL。讲解顺序是按图中蓝圈标示的顺序。<br>命名规则为：L代表Low，H代表High，S代表Speed,I代表Internal,E代表External。</p></blockquote><h2 id="LSI内部低速时钟"><a href="#LSI内部低速时钟" class="headerlink" title="LSI内部低速时钟"></a>LSI内部低速时钟</h2><p>RC振荡器，频率为32kHz左右。供独立看门狗和自动唤醒单元使用。</p><h2 id="LSE外部低速时钟"><a href="#LSE外部低速时钟" class="headerlink" title="LSE外部低速时钟"></a>LSE外部低速时钟</h2><p>接频率为32.768kHz的石英晶体，这个主要是RTC的时钟源。</p><h2 id="HSE外部高速时钟"><a href="#HSE外部高速时钟" class="headerlink" title="HSE外部高速时钟"></a>HSE外部高速时钟</h2><p>可接石英&#x2F;陶瓷谐振器，或者接外部时钟源，频率范围为4MHz~26MHz。HSE可以直接作为系统时钟或者PLL的输入。</p><h2 id="HSI内部高速时钟"><a href="#HSI内部高速时钟" class="headerlink" title="HSI内部高速时钟"></a>HSI内部高速时钟</h2><p>RC振荡器，频率为16MHz。可以直接作为系统时钟或者用作PLL输入。</p><h2 id="PLL锁相环倍频输出"><a href="#PLL锁相环倍频输出" class="headerlink" title="PLL锁相环倍频输出"></a>PLL锁相环倍频输出</h2><p>STM32F4有两个PLL：</p><ol><li>主PLL(PLL)由HSE或者HSI提供时钟信号，并具有两个不同的输出时钟。</li></ol><ul><li>第一个输出PLLP用于生成高速的系统时钟(最高168MHz)。</li><li>第二个输出PLLQ用于生成USB OTG FS的时钟(48MHz)，随机数发生器的时钟和SDIO时钟。</li><li>专用PLL(PLLI2S)用于生成精确时钟，从而在I2S接口实现高品质音频性能。<br><strong>这里我们着重看看主PLL时钟第一个高速时钟输出PLLP的计算方法</strong>。</li></ul><ol><li><strong>大概分析</strong>：主PLL的输入先经过一个分频系数为M的分频器成为了VCO的时钟输入，<br>（VCO是PLL的一部分，压控振荡器），然后再经过倍频系数为N的倍频器，<br>最后再经过一个分频系数为P（系统时钟的）或者Q（外设时钟）的分频器之后才生成主PLL时钟。</li><li><strong>举例分析</strong>：<br>(1)假设HSE &#x3D; 8MHZ,我们选择了HSE作为PLL的时钟源，因为VCO的时钟必须要在1-2M之间，所以我们设置PLL_M &#x3D; 8M,得到PLL_VCO &#x3D; 1M.<br>(2)接着VCO输入时钟经过VCO倍频因子N倍频之后，成为了VCO的时钟输出，VCO时钟必须在192-432M之间，我们配置N &#x3D; 336，则VCO时钟输出为336M，VCO时钟输出后有3个分频因子。</li></ol><ul><li>PLLCLK 分频因子 P </li><li>时钟分频因子 Q</li><li>分频因子 R（F446 才有，F407 没有）。</li></ul><ol start="3"><li>有关 PLL 的配置有一个专门的 RCC PLL 配置寄存器<strong>RCC_PLLCFGR</strong>，具体描述看手册即可。</li></ol><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">VCOCLK_IN = PLLCLK_IN / M = HSE / <span class="number">8</span> = <span class="number">1</span>M</span><br><span class="line">VCOCLK_OUT = VCOCLK_IN * N = <span class="number">1</span>M * <span class="number">336</span> = <span class="number">336</span>M </span><br><span class="line">PLLCLK_OUT=VCOCLK_OUT/P=<span class="number">336</span>/<span class="number">2</span>=<span class="number">168</span>M  </span><br></pre></td></tr></table></figure><h2 id="上面提到的系统时钟"><a href="#上面提到的系统时钟" class="headerlink" title="上面提到的系统时钟"></a>上面提到的系统时钟</h2><p>系统时钟是MCU的主要时钟源，它提供给所有的外设。系统时钟来源可以是：HSI、PLLCLK、HSE，具体的由时钟配置寄存器<strong>RCC_CFGR</strong> 的<strong>SW位</strong>配置。<br>我们这里设置系统时钟：SYSCLK &#x3D; PLLCLK &#x3D; 168M。如果系统时钟是由 HSE 经过 PLL 倍频之后的 PLLCLK 得到，当 HSE 出现故障的时候，系统时钟会切换为 HSI&#x3D;16M，直到 HSE 恢复正常为止。</p><h2 id="AHB总线时钟HCLK"><a href="#AHB总线时钟HCLK" class="headerlink" title="AHB总线时钟HCLK"></a>AHB总线时钟HCLK</h2><p>系统时钟 SYSCLK 经过 AHB 预分频器分频之后得到时钟叫 AHB 总线时钟，即 HCLK。<br>分频因子可以是:[1,2,4,8,16,64,128,256,512]，具体的由时钟配置寄存器 <strong>RCC_CFGR</strong>的<strong>HPRE位</strong>设置。<br>片上大部分外设的时钟都是经过 HCLK 分频得到，至于 AHB 总线上的外设的时钟设置为多少，得等到我们使用该外设的时候才设置，我们这里只需设置好 APB 的时钟即可。我们这里设置为 1 分频，即 HCLK&#x3D;SYSCLK&#x3D;168M。</p><h2 id="APB2总线时钟PCLK2"><a href="#APB2总线时钟PCLK2" class="headerlink" title="APB2总线时钟PCLK2"></a>APB2总线时钟PCLK2</h2><p>APB2 总线时钟 PCLK2 由 HCLK 经过高速 APB2 预分频器得到。<br>分频因子可以 是:[1,2,4,8,16]，具体由时钟配置寄存器<strong>RCC_CFGR</strong>的<strong>PPRE2位</strong>设置。<br>HCLK2 属于高速的总线时钟，片上高速的外设就挂载到这条总线上，比如全部的 GPIO、USART1、SPI1 等。<br>至于 APB2 总线上的外设的时钟设置为多少，得等到我们使用该外设的时候才设置。<br>我们这里只需设置好 APB2 的时钟即可。我们这里设置为2分频，即PCLK2 &#x3D; HCLK &#x2F;2&#x3D; 84M。</p><h2 id="APB总线时钟PCLK1"><a href="#APB总线时钟PCLK1" class="headerlink" title="APB总线时钟PCLK1"></a>APB总线时钟PCLK1</h2><p>APB1 总线时钟 PCLK1 由 HCLK 经过低速 APB 预分频器得到，分频因子可以是:[1,2,4,8,16]<br>具体由时钟配置寄存器<strong>RCC_CFGR</strong>的<strong>PPRE1位</strong>设置。<br>HCLK1 属于低速的总线时钟，最高为 42M，片上低速的外设就挂载到这条总线上。<br>比如 USART2&#x2F;3&#x2F;4&#x2F;5、SPI2&#x2F;3，I2C1&#x2F;2 等。<br>至于 APB1 总线上的外设的时钟设置为多少，得等到我们使用该外设的时候才设置。<br>我们这里只需设置好 APB1 的时钟即可。我们这里设置为4分频，即PCLK1 &#x3D; HCLK&#x2F;4 &#x3D; 42M。</p><h2 id="APBx定时器时钟"><a href="#APBx定时器时钟" class="headerlink" title="APBx定时器时钟"></a>APBx定时器时钟</h2><p><strong>这个配置定时器的时候，需要特别注意</strong><br>当APBx分频数为1的时候，对应定时器的时钟为APBx的时钟，否则对应定时器时钟都是APB总线的两倍。</p><h1 id="SystemInit函数"><a href="#SystemInit函数" class="headerlink" title="SystemInit函数"></a>SystemInit函数</h1><p>在启动文件中，有一个名为 SystemInit 的函数，它是在单片机启动时被调用的。<br>这个函数的主要作用是初始化系统时钟，设置系统时钟源、分频器和倍频器。<br>在 SystemInit 函数中，我们可以个性化地配置系统时钟为我们需要的频率。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> MCU理解 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 时钟树 </tag>
+            
+            <tag> MCU理解 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>屏驱ST7789V_SPI开发</title>
+      <link href="/_posts/31488/"/>
+      <url>/_posts/31488/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      <categories>
+          
+          <category> MCU驱动开发 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> MCU驱动开发 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>浦洋P169触摸屏驱动开发</title>
+      <link href="/_posts/31489/"/>
+      <url>/_posts/31489/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      <categories>
+          
+          <category> MCU驱动开发 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> MCU驱动开发 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>单片机的启动流程</title>
       <link href="/_posts/30383/"/>
       <url>/_posts/30383/</url>
@@ -511,52 +588,23 @@
     
     
     <entry>
-      <title>几条简单的ARM汇编指令</title>
-      <link href="/_posts/26318/"/>
-      <url>/_posts/26318/</url>
+      <title>通过点灯学习C的面向对象编程思想</title>
+      <link href="/_posts/64580/"/>
+      <url>/_posts/64580/</url>
       
-        <content type="html"><![CDATA[<h1 id="什么是程序"><a href="#什么是程序" class="headerlink" title="什么是程序"></a>什么是程序</h1><p>我认为程序就是</p><ul><li>一段被烧写在flash里面的机器码（指令）（bin文件）</li><li>运行过程中的数据（属于程序里的一部分）</li></ul><p>cpu运行期间会在flash取指令然后执行各种操作。</p><h1 id="程序运行时CPU如何读写内存"><a href="#程序运行时CPU如何读写内存" class="headerlink" title="程序运行时CPU如何读写内存"></a>程序运行时CPU如何读写内存</h1><p>cpu内部有寄存器，R0~R15寄存器<br>读数据是将数据从内存RAM读取到寄存器，写数据是将数据从寄存器写入内存RAM。<br>其中读写操作涉及几条汇编指令：LDR、STR、SUB、ADD、CMP、B、BL、POP、PUSH、LDIMA。<br>下面我们就来介绍一下这些指令。</p><h1 id="ARM汇编简介"><a href="#ARM汇编简介" class="headerlink" title="ARM汇编简介"></a>ARM汇编简介</h1><p>了解汇编指令之前我们了解一下什么是汇编语言：</p><blockquote><p>1985年，ARM公司推出了第一款ARM（Acorn RISC Machine）处理器，采用精简指令集（RISC）设计理念。他们发布了两类指令集：ARM指令集和Thumb指令集。ARM指令集是32位指令，Thumb指令集是16位指令。所以基于ARM架构的CPU可以同时运行ARM指令集和Thumb指令集。<br>那怎么区分当前指令是ARM指令集还是Thumb指令集呢？在程序状态寄存器（CPSR）中，有一个标志位T。当T位为0时，当前指令是ARM指令集；当T位为1时，当前指令是Thumb指令集。<br>但是指令集只是一串二进制代码，我们怎么区分？所以ARM公司推出了Unified Assembly Language（UAL）即统一汇编语言。所以我们只用记住一些简单的指令，在程序前声明THUMB&#x2F;ARM指令集之后就可以编写代码了。</p></blockquote><h2 id="LDR读内存"><a href="#LDR读内存" class="headerlink" title="LDR读内存"></a>LDR读内存</h2><blockquote><p>格式为：LDR 目的寄存器,&lt;内存地址&gt;</p></blockquote><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">LDR  R0,[R1]       ;将内存地址为R1的字数据读入寄存器R0。</span><br><span class="line">LDR  R0,[R1,R2]    ;将内存地址为R1+R2的字数据读入寄存器R0。</span><br><span class="line">LDR  R0,[R1,＃<span class="number">8</span>]   ;将内存地址为R1+<span class="number">8</span>的字数据读入寄存器R0。</span><br><span class="line">LDR  R0,[R1,R2]!   ;将内存地址为R1+R2的字数据读入寄存器R0，并将新地址R1＋R2写入R1。</span><br><span class="line">LDR  R0,[R1,＃<span class="number">8</span>]!  ;将内存地址为R1+<span class="number">8</span>的字数据读入寄存器R0，并将新地址R1＋<span class="number">8</span>写入R1。</span><br><span class="line">LDR  R0,[R1],R2    ;将内存地址为R1的字数据读入寄存器R0，并将新地址R1＋R2写入R1。</span><br><span class="line">*/</span><br></pre></td></tr></table></figure><h3 id="立即数"><a href="#立即数" class="headerlink" title="立即数"></a>立即数</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">MOV R0, #VAL  <span class="comment">//  将立即数VAL加载到寄存器R0中</span></span><br></pre></td></tr></table></figure><p><strong>什么是立即数，val可以是任何数吗？</strong></p><ul><li>立即数是指在指令中直接给出的数值。ARM汇编中用#前缀表示立即数。</li><li>立即数并不是任意 32 位整数，由于 ARM 指令的固定长度（32 位），其中一部分位必须用于表示操作码、目标寄存器等。例如“MOV R0, #VAL”这条指令本身就是16位或者32位指令，哪来的空间保存任意数值的VAL?我们暂且认为立即数满足某种规定。</li></ul><h3 id="LDR伪指令"><a href="#LDR伪指令" class="headerlink" title="LDR伪指令"></a>LDR伪指令</h3><p><strong>但是我就是想将任意数加载到寄存器中，怎么办？</strong><br>这就引出了<strong>LDR伪指令：LDR R0, &#x3D;VAL</strong>。<br>什么是伪指令？伪指令指的就是不存在的指令，只是编译器在编译时将其转换为实际的指令。例如：</p><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">LDR R0, =<span class="number">0X12</span>  </span><br><span class="line"><span class="comment">//  0X12是一个立即数，那么编译器会将其转换为MOV R0, #0X12</span></span><br><span class="line">     </span><br><span class="line">LDR R0, =<span class="number">0X12345678</span> </span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">  0X12345678不是一个立即数</span></span><br><span class="line"><span class="comment">  编译器会将其转换为LDR R0, [PC, #offset]</span></span><br><span class="line"><span class="comment">  其中这个offset在链接的时候会被计算出来</span></span><br><span class="line"><span class="comment">  label DCD 0X12345678  // 在程序的某一个位置存放这个数据</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure><h2 id="写内存STR"><a href="#写内存STR" class="headerlink" title="写内存STR"></a>写内存STR</h2><blockquote><p>格式为：STR 源寄存器,&lt;内存地址&gt;</p></blockquote><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">STR R0,[R1],＃<span class="number">8</span> ;将R0中的字数据写入以R1为地址的存储器中，并将新地址R1＋<span class="number">8</span>写入R1。</span><br><span class="line">STR R0,[R1,＃<span class="number">8</span>] ;将R0中的字数据写入以R1＋<span class="number">8</span>为地址的存储器中。</span><br><span class="line">STR R1,[R0]     ;将R1寄存器的值，传送到以r0为地址的存储器中。</span><br></pre></td></tr></table></figure><h2 id="加减SUB、ADD"><a href="#加减SUB、ADD" class="headerlink" title="加减SUB、ADD"></a>加减SUB、ADD</h2><p>ADD{S} 目的寄存器,操作数1,操作数2：把两个操作数相加，并将结果存放到目的寄存器中。<br>操作数1应是一个寄存器，操作数2可以是一个寄存器、被移位的寄存器，或者一个立即数。</p><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">ADD  R0,R1,R2           ; R0 = R1 + R2</span><br><span class="line">ADD  R0,R1,#<span class="number">256</span>         ; R0 = R1 + <span class="number">256</span></span><br><span class="line">ADD  R0,R2,R3,LSL#<span class="number">1</span>     ; R0 = R2 + (R3 &lt;&lt; <span class="number">1</span>)</span><br><span class="line"> </span><br><span class="line">SUB  R0,R1,R2         ;R0 = R1 - R2</span><br><span class="line">SUB  R0,R1,#<span class="number">256</span>       ;R0 = R1 - <span class="number">256</span></span><br><span class="line">SUB  R0,R2,R3,LSL#<span class="number">1</span>   ;R0 = R2 - (R3 &lt;&lt; <span class="number">1</span>)</span><br></pre></td></tr></table></figure><h2 id="比较CMP"><a href="#比较CMP" class="headerlink" title="比较CMP"></a>比较CMP</h2><p>CMP{条件} 操作数1,操作数2：将一个寄存器的内容和另一个寄存器的内容或立即数进行比较，比较结果放在CPSR中条件标志位的值</p><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">CMP R1,R0     ;将寄存器R1的值与寄存器R0的值相减，并根据结果设置CPSR的标志位</span><br><span class="line">CMP R1,＃<span class="number">100</span>  ;将寄存器R1的值与立即数<span class="number">100</span>相减，并根据结果设置CPSR的标志位</span><br></pre></td></tr></table></figure><h2 id="跳转指令"><a href="#跳转指令" class="headerlink" title="跳转指令"></a>跳转指令</h2><table><thead><tr><th align="left">指令</th><th align="left">功能描述</th><th align="left">应用场景</th><th align="left">对寄存器的影响</th><th align="left">示例</th></tr></thead><tbody><tr><td align="left">B</td><td align="left">实现无条件跳转，跳转值为相对当前PC的偏移量（24位有符号数扩展为32位）</td><td align="left">短距离跳转、循环或条件跳转</td><td align="left">仅改变程序计数器（PC）</td><td align="left"><code>B Label;</code><br><code>CMP R1, #0;</code><br><code>BEQ Label;</code></td></tr><tr><td align="left">BL</td><td align="left">跳转前将下一条指令地址存入链接寄存器LR（R14），便于子程序返回</td><td align="left">子程序调用</td><td align="left">改变PC，将返回地址存入LR</td><td align="left"><code>BL func</code></td></tr><tr><td align="left">BX</td><td align="left">跳转到指定地址，根据目标地址寄存器最低位&#x2F;两位切换处理器状态（1为Thumb，0为ARM）</td><td align="left">ARM与Thumb指令集间切换跳转</td><td align="left">改变PC，切换处理器状态</td><td align="left"><code>BX R0</code></td></tr><tr><td align="left">BLX</td><td align="left">结合BL和BX功能，跳转前存返回地址到LR，并切换处理器状态</td><td align="left">调用Thumb指令集子程序（调用者为ARM指令集）</td><td align="left">改变PC，将返回地址存入LR，切换处理器状态</td><td align="left"><code>BLX R0</code></td></tr></tbody></table><blockquote><p>不了解栈的建议先看这篇博客：<a href="http://localhost:4000/_posts/52059/">内存堆栈管理</a></p></blockquote><h2 id="POP出栈"><a href="#POP出栈" class="headerlink" title="POP出栈"></a>POP出栈</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">内存：</span><br><span class="line"><span class="number">0x2000</span> <span class="number">0294</span> = <span class="number">0x1212</span> <span class="number">1212</span></span><br><span class="line"><span class="number">0x2000</span> <span class="number">0298</span> = <span class="number">0xEFEF</span> EFEF</span><br><span class="line"><span class="number">0x2000</span> <span class="number">029</span>C = <span class="number">0x0000</span> <span class="number">2079</span></span><br><span class="line"><span class="number">0x2000</span> <span class="number">02</span>A0 = <span class="number">0x0100</span> <span class="number">0000</span></span><br><span class="line"></span><br><span class="line">一开始SP指向<span class="number">0x2000</span> <span class="number">0294</span>这个地址</span><br><span class="line">执行指令：POP &#123;R0 -R3&#125; 之后</span><br><span class="line"></span><br><span class="line">R0 = <span class="number">0x1212</span> <span class="number">1212</span></span><br><span class="line">R1 = <span class="number">0xEFEF</span> EFEF</span><br><span class="line">R2 = <span class="number">0x0000</span> <span class="number">2079</span></span><br><span class="line">R3 = <span class="number">0x0100</span> <span class="number">0000</span></span><br><span class="line"></span><br><span class="line">SP指向的位置为: <span class="number">0x2000</span> <span class="number">02</span>A4</span><br></pre></td></tr></table></figure><p>从上面例子可以看出两点</p><ul><li>POP指令会将栈顶的数据弹出，并且SP会指向栈顶的下一个地址</li><li>{R0-R3} 这些高标号的寄存器对应高地址</li><li>出栈的时候SP指针从低地址向高地址移动</li></ul><h2 id="PUSH压栈"><a href="#PUSH压栈" class="headerlink" title="PUSH压栈"></a>PUSH压栈</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">一开始SP指向 <span class="number">0x2000</span> <span class="number">0284</span></span><br><span class="line"></span><br><span class="line">这个时候寄存器的值：</span><br><span class="line">R0 = <span class="number">0x1212</span> <span class="number">1212</span></span><br><span class="line">R1 = <span class="number">0x0000</span> <span class="number">1B</span>C3</span><br><span class="line">R2 = <span class="number">0x0000</span> <span class="number">1B</span>C3</span><br><span class="line">R3 = <span class="number">0x0000</span> <span class="number">0000</span></span><br><span class="line"></span><br><span class="line">执行指令 PUSH &#123;R0 - R3&#125; 之后，</span><br><span class="line"></span><br><span class="line">内存地址：</span><br><span class="line"><span class="number">0x2000</span> <span class="number">0274</span>的值为: <span class="number">0x1212</span> <span class="number">1212</span> --------- R0</span><br><span class="line"><span class="number">0x2000</span> <span class="number">0278</span>的值为: <span class="number">0x0000</span> <span class="number">1B</span>C3 --------- R1</span><br><span class="line"><span class="number">0x2000</span> <span class="number">027</span>C的值为: <span class="number">0x0000</span> <span class="number">1B</span>C3 --------- R2</span><br><span class="line"><span class="number">0x2000</span> <span class="number">0280</span>的值为: <span class="number">0x0000</span> <span class="number">0000</span> --------- R3</span><br><span class="line"></span><br><span class="line">执行之后 堆栈指针，指向的地址为: <span class="number">0x2000</span> <span class="number">0274</span></span><br></pre></td></tr></table></figure><p>从上面例子可以看出两点</p><ul><li>PUSH指令会将寄存器中的数据压栈，并且SP会指向栈顶的下一个地址</li><li>{R0-R3} 这些高标号的寄存器对应高地址</li><li>入栈的时候SP指针从高地址向低地址移动</li></ul>]]></content>
+        <content type="html"><![CDATA[<h1 id="面向对象思想是什么？"><a href="#面向对象思想是什么？" class="headerlink" title="面向对象思想是什么？"></a>面向对象思想是什么？</h1><p>有的人说C语言是一门面向过程的编程语言，但是面向过程只是一种设计思想，而不是某种语言的私有财产。那什么是<strong>面向过程</strong>思想，什么是<strong>面向对象</strong>思想？<br><strong>面向过程</strong>专注于“先A，再B，然后C”的流程，适合解决线性的任务。<br><strong>面向对象</strong>专注于“谁？什么状态？能干什么？”，适合复杂系统，例如linux内核。</p><h1 id="为什么我们要学习面向对象思想？"><a href="#为什么我们要学习面向对象思想？" class="headerlink" title="为什么我们要学习面向对象思想？"></a>为什么我们要学习面向对象思想？</h1><p>你有没有过这种体验？读别人写的C语言项目，跟着一个函数跳来跳去，数据传来传去，改一个结构要动十个文件… 感觉自己不是在读代码，而是在走迷宫；<strong>或者</strong>当你自己写一个稍大的程序时，变量越加越多，函数越改越乱，到最后连自己都理不清。这通常不是C语言的错，而是我们被“一步一步来”的面向过程思维框住了。<br><strong>面向对象思想</strong>可以帮助我们把复杂系统拆分成职责清晰的模块，减少函数跳转和全局状态的传播，使代码更易读、可维护并且便于扩展。<br>下面本文将从介绍C语言如何运用<strong>结构体、函数指针</strong>实现面向对象编程的核心理念——<strong>抽象、封装、继承与多态</strong>。</p><h1 id="面向对象的四大基本特性"><a href="#面向对象的四大基本特性" class="headerlink" title="面向对象的四大基本特性"></a>面向对象的四大基本特性</h1><h2 id="抽象"><a href="#抽象" class="headerlink" title="抽象"></a>抽象</h2><p>我们可以对现实存在的各种事物进行抽象，把它封装成一种数据类型——类。<br>无论壁灯、吊灯、吸顶灯，他们都是灯，拥有各自的特点，我们可以将这些共同的东西进行抽象，封装成Lamp这个类。</p><h2 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h2><p>封装则是将灯的属性和方法都封装到一个结构体里。<strong>封装后的结构体就相当于一个类</strong>。</p><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">Lamp</span> &#123;</span></span><br><span class="line">    <span class="type">int</span> on;</span><br><span class="line">    <span class="type">int</span> brightness;</span><br><span class="line">    <span class="comment">/*  self是一个指向当前结构体实例的指针  */</span></span><br><span class="line">    <span class="type">void</span> (*turn_on)(<span class="keyword">struct</span> Lamp *self);</span><br><span class="line">    <span class="type">void</span> (*turn_off)(<span class="keyword">struct</span> Lamp *self);</span><br><span class="line">&#125; Lamp;</span><br></pre></td></tr></table></figure><p>这样我们就得到了我们的Lamp类啦，但是子类想要使用该类的属性和方法该如何继承呢？</p><h2 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h2><p>我们封装一个类的目的就是为了继承，从而实现代码的复用。<br>继承的实现：将基类放在结构体开头来模拟继承。</p><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* &quot;子类&quot;：FlashingLamp */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    Lamp base;</span><br><span class="line">    <span class="type">int</span> freq_ms;</span><br><span class="line">&#125; FlashingLamp;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">lamp_turn_on</span><span class="params">(Lamp *self)</span>   &#123; self-&gt;on = <span class="number">1</span>; <span class="built_in">puts</span>(<span class="string">&quot;Lamp: on&quot;</span>); &#125;</span><br><span class="line"><span class="type">void</span> <span class="title function_">lamp_turn_off</span><span class="params">(Lamp *self)</span> &#123; self-&gt;on = <span class="number">0</span>; <span class="built_in">puts</span>(<span class="string">&quot;Lamp: off&quot;</span>); &#125;</span><br><span class="line"></span><br><span class="line">Lamp *<span class="title function_">Lamp_new</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">    Lamp *l = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(Lamp));</span><br><span class="line">    l-&gt;on = <span class="number">0</span>;</span><br><span class="line">    l-&gt;turn_on = lamp_turn_on;</span><br><span class="line">    l-&gt;turn_off = lamp_turn_off;</span><br><span class="line">    <span class="keyword">return</span> l;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure><p>如代码所示，我们在结构体类型FlashingLamp里面内嵌了结构体类型Lamp，此时FlashingLamp就相当于模拟了一个子类，而Lamp相当于父类。通过这种内嵌就实现了子类<strong>继承</strong>了父类的属性和方法。<br>子类不仅可以直接复用父类中定义的属性和方法，还可以在父类的基础上拓展自己的属性和方法。<br>对于不同的灯我们打开的方式也不一样，所以我们可以在继承的过程中<strong>重新定义父类</strong>。</p><h2 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">flashing_turn_on</span><span class="params">(Lamp *self)</span> &#123;</span><br><span class="line">    <span class="comment">/* 子类覆盖行为 */</span></span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;FlashingLamp: start flashing&quot;</span>);</span><br><span class="line">    self-&gt;on = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">FlashingLamp *<span class="title function_">FlashingLamp_new</span><span class="params">(<span class="type">int</span> freq_ms)</span> &#123;</span><br><span class="line">    FlashingLamp *f = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(FlashingLamp));</span><br><span class="line">    f-&gt;base.on = <span class="number">0</span>;</span><br><span class="line">    f-&gt;base.turn_on = flashing_turn_on; <span class="comment">/* 覆盖方法 */</span></span><br><span class="line">    f-&gt;base.turn_off = lamp_turn_off;</span><br><span class="line">    f-&gt;freq_ms = freq_ms;</span><br><span class="line">    <span class="keyword">return</span> f;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">  Lamp *a = Lamp_new();</span><br><span class="line">  <span class="comment">/*  强制转换成基类指针  */</span></span><br><span class="line">  Lamp *b = (Lamp*)FlashingLamp_new(<span class="number">200</span>);</span><br><span class="line"></span><br><span class="line">  a-&gt;turn_on(a);</span><br><span class="line">  b-&gt;turn_on(b);</span><br><span class="line"></span><br><span class="line">  a-&gt;turn_off(a);</span><br><span class="line">  b-&gt;turn_off(b);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure><p>如上所示，我们通过基类指针去调用子类中的不同实现，就叫作多态。</p>]]></content>
       
       
       <categories>
           
-          <category> ARM架构 </category>
+          <category> C语言进阶 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> ARM架构 </tag>
-            
-            <tag> 汇编 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>内存布局</title>
-      <link href="/_posts/20977/"/>
-      <url>/_posts/20977/</url>
-      
-        <content type="html"><![CDATA[<blockquote><p>建议在阅读本文章之前先阅读以下文章：<br><a href="http://localhost:4000/_posts/59193">程序的编译、链接过程</a></p></blockquote><h1 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h1><ol><li><strong>Flash (ROM&#x2F;Program Memory)</strong>：存储程序代码和常量。</li><li><strong>RAM (Data Memory)</strong>：存储运行时的变量（全局、静态、局部）、堆栈数据。</li><li><strong>链接器脚本 (Linker Script, .ld 文件)</strong>：<br>告诉链接器如何将汇编器生成的各个目标文件中的“段”组合起来，最终映射到物理的 Flash 和 RAM 地址空间。</li><li><strong>启动代码 (Startup Code)</strong>：在 main 函数执行之前运行的初始化代码，负责关键的硬件初始化和最关键的内存初始化（初始化 .data 段，清零 .bss 段，设置堆栈指针）。</li></ol><h1 id="主要的内存段"><a href="#主要的内存段" class="headerlink" title="主要的内存段"></a>主要的内存段</h1><p><img src="/../../img/ARM%E6%9E%B6%E6%9E%84/%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80RAM&ROM.png" alt="各个段在内存中的示意图（箭头代表增长方向）"></p><h2 id="1-text-代码段"><a href="#1-text-代码段" class="headerlink" title="1. .text (代码段)"></a>1. .text (代码段)</h2><p><strong>作用</strong>：存储程序的可执行代码（机器指令）</p><p><strong>存储位置</strong>：Flash (ROM)。因为代码是只读的，并且需要掉电后保留。</p><p><strong>实现</strong>：编译器将 C&#x2F;C++&#x2F;汇编代码编译成机器指令</p><ul><li>汇编器&#x2F;编译器将这些指令放入文件的 .text 段</li><li>链接器根据链接脚本将所有目标文件的 .text 段合并，并定位到 Flash 的起始地址（通常是 0x08000000 或类似地址）</li><li>上电复位后，CPU 从 Flash 的 .text 段中取指令执行</li></ul><h2 id="2-data-已初始化数据段"><a href="#2-data-已初始化数据段" class="headerlink" title="2. .data (已初始化数据段)"></a>2. .data (已初始化数据段)</h2><p><strong>作用</strong>：存储已初始化的全局变量和静态变量（包括函数内部的静态变量）。这些变量在程序开始运行时就有一个明确的非零初始值。</p><p><strong>存储位置</strong>：</p><ul><li>初始值存储在 Flash (ROM)：编译器在编译时知道这些变量的初始值，所以这些初始值被当作常量数据存储</li><li>运行时这些变量会被复制到 RAM 中（由启动代码在 main() 执行前完成）</li></ul><p><strong>实现 (关键点)</strong>：</p><ul><li>编译器为每个已初始化的全局&#x2F;静态变量预留 RAM 空间</li><li>编译器将这些变量的初始值提取出来，放入一个特殊的 .data 段（这个 .data 段最终会放在 Flash 中）</li><li>链接脚本做两件重要的事情：<ol><li>定义 .data 段在 RAM 中的运行时起始地址 (_sdata) 和结束地址 (_edata)</li><li>定义 .data 段的初始值在 Flash 中的存储位置 (_sidata)</li></ol></li><li>启动代码 (核心任务之一)：<ul><li>在 main() 执行前，启动代码负责将 Flash 中 _sidata 地址开始的 .data 段初始值数据，复制到 RAM 中 _sdata 地址开始的区域</li><li>复制长度是 _edata - _sdata</li><li>复制完成后，RAM 中的这些变量就有了程序设定的初始值</li></ul></li></ul><p><strong>关键特性</strong>：需要初始化（非零初始值），占用 Flash (存初始值) 和 RAM (存变量本身) 两种空间。启动时必须从 Flash 复制到 RAM。</p><h2 id="3-bss-未初始化数据段"><a href="#3-bss-未初始化数据段" class="headerlink" title="3. .bss (未初始化数据段)"></a>3. .bss (未初始化数据段)</h2><p><strong>作用</strong>：存储未初始化或显式初始化为 0 的全局变量和静态变量。</p><p><strong>存储位置</strong>：RAM。因为这些变量在程序开始运行时没有有效值（或要求为 0），不需要在 Flash 中存储任何初始数据（除了知道它的大小）。</p><p><strong>实现 (关键点)</strong>：</p><ul><li>编译器为每个未初始化或初始化为 0 的全局&#x2F;静态变量预留 RAM 空间</li><li>编译器将这些变量放入 .bss 段。注意：.bss 段本身在最终的程序镜像（烧写到 Flash 的 .bin&#x2F;.hex 文件）中不占据任何实际字节空间！它只记录需要预留多少 RAM 并将其初始化为 0。</li><li>链接器脚本定义 .bss 段在 RAM 中的起始地址 (_sbss) 和结束地址 (_ebss)</li><li>启动代码 (核心任务之二)：<ul><li>在 main() 执行前，启动代码负责将 RAM 中从 _sbss 到 _ebss 的区域清零</li><li>清零长度是 _ebss - _sbss</li></ul></li></ul><p><strong>关键特性</strong>：初始值为零（或未初始化），只占用 RAM 空间，在 Flash 中不存储实际数据（只记录大小）。启动时必须清零。</p><h2 id="4-rodata-段-只读数据段"><a href="#4-rodata-段-只读数据段" class="headerlink" title="4. .rodata 段 (只读数据段)"></a>4. .rodata 段 (只读数据段)</h2><p><strong>作用</strong>：存储常量数据，程序运行期间不会被修改。</p><p><strong>存储位置</strong>：Flash (ROM)。因为是只读的。</p><p><strong>实现</strong>：</p><ul><li>编译器将常量放入 .rodata 段</li><li>链接器将所有 .rodata 段合并并定位到 Flash 的某个区域（通常在 .text 段之后）</li><li>程序运行时直接从 Flash 中读取这些常量数据。有些单片机架构（如 Harvard）不能直接从 Flash 执行数据访问，可能需要特殊指令或临时复制到 RAM，但 .rodata 本身的目标位置是 Flash</li></ul><p><strong>关键特性</strong>：只读，存储在 Flash，不占用 RAM。CPU 直接（或通过特殊方式）从 Flash 读取。</p><h2 id="5-stack（栈区）"><a href="#5-stack（栈区）" class="headerlink" title="5. stack（栈区）"></a>5. stack（栈区）</h2><p><strong>作用</strong>：</p><ul><li>存储局部变量（非静态）</li><li>存储函数调用时的返回地址</li><li>存储函数参数</li><li>保存函数调用前后的寄存器现场</li></ul><p><strong>存储位置</strong>：RAM。需要快速读写。</p><p><strong>实现</strong>：</p><ul><li>通常由链接脚本定义栈的起始地址（栈顶 _estack，通常是 RAM 的最高地址）和大小</li><li>启动代码 (核心任务之三)：设置栈指针寄存器 (SP) 指向链接脚本定义的栈顶地址 _estack</li><li>运行时由 CPU 硬件自动管理（PUSH&#x2F;POP 指令）。函数调用时，局部变量空间在栈上分配；函数返回时，空间自动释放</li><li>栈通常从高地址向低地址增长</li></ul><h2 id="6-heap（堆区）"><a href="#6-heap（堆区）" class="headerlink" title="6. heap（堆区）"></a>6. heap（堆区）</h2><p><strong>作用</strong>：存储动态分配的内存（通过 malloc(), calloc(), new 等分配）</p><p><strong>存储位置</strong>：RAM。需要动态管理。</p><p><strong>实现</strong>：</p><ul><li>链接脚本定义堆的起始地址（通常是 .bss 段结束之后 _end）和大小（_heap_end - _heap_start）</li><li>通常需要实现一个堆内存管理器（如 malloc&#x2F;free 的实现，可能是 newlib 等 C 库提供的，或自定义的）。这个管理器负责在定义的堆区域内分配和回收内存块</li><li>堆通常从低地址向高地址增长（与栈相反），两者在 RAM 中间区域相遇</li></ul><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><table><thead><tr><th align="left">段名</th><th align="left">存储内容</th><th align="left">主要存储位置</th><th align="left">关键初始化动作(启动代码)</th><th align="left">占用空间类型</th><th align="left">备注</th></tr></thead><tbody><tr><td align="left">.text</td><td align="left">程序代码(指令)</td><td align="left">Flash</td><td align="left">无(CPU直接执行)</td><td align="left">Flash</td><td align="left">只读</td></tr><tr><td align="left">.data</td><td align="left">已初始化的全局&#x2F;静态变量</td><td align="left">RAM</td><td align="left">从Flash复制初始值到RAM</td><td align="left">Flash(值)+RAM(变量)</td><td align="left">启动时必须复制</td></tr><tr><td align="left">.bss</td><td align="left">未初始化的全局&#x2F;静态变量(0)</td><td align="left">RAM</td><td align="left">将RAM区域清零</td><td align="left">RAM</td><td align="left">不占Flash空间，启动时必须清零</td></tr><tr><td align="left">.rodata</td><td align="left">常量数据</td><td align="left">Flash</td><td align="left">无(程序直接从Flash读取)</td><td align="left">Flash</td><td align="left">只读</td></tr><tr><td align="left">stack</td><td align="left">局部变量、返回地址、参数等</td><td align="left">RAM</td><td align="left">设置栈指针(SP)</td><td align="left">RAM</td><td align="left">自动管理，向下增长，溢出危险</td></tr><tr><td align="left">heap</td><td align="left">动态分配的内存</td><td align="left">RAM</td><td align="left">初始化堆管理器(可选)</td><td align="left">RAM</td><td align="left">程序员管理(malloc&#x2F;free)，向上增长，碎片风险</td></tr></tbody></table>]]></content>
-      
-      
-      <categories>
-          
-          <category> ARM架构 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> ARM架构 </tag>
-            
-            <tag> 内存管理 </tag>
+            <tag> C语言 </tag>
             
         </tags>
       
@@ -592,23 +640,52 @@
     
     
     <entry>
-      <title>通过点灯学习C的面向对象编程思想</title>
-      <link href="/_posts/64580/"/>
-      <url>/_posts/64580/</url>
+      <title>内存布局</title>
+      <link href="/_posts/20977/"/>
+      <url>/_posts/20977/</url>
       
-        <content type="html"><![CDATA[<h1 id="面向对象思想是什么？"><a href="#面向对象思想是什么？" class="headerlink" title="面向对象思想是什么？"></a>面向对象思想是什么？</h1><p>有的人说C语言是一门面向过程的编程语言，但是面向过程只是一种设计思想，而不是某种语言的私有财产。那什么是<strong>面向过程</strong>思想，什么是<strong>面向对象</strong>思想？<br><strong>面向过程</strong>专注于“先A，再B，然后C”的流程，适合解决线性的任务。<br><strong>面向对象</strong>专注于“谁？什么状态？能干什么？”，适合复杂系统，例如linux内核。</p><h1 id="为什么我们要学习面向对象思想？"><a href="#为什么我们要学习面向对象思想？" class="headerlink" title="为什么我们要学习面向对象思想？"></a>为什么我们要学习面向对象思想？</h1><p>你有没有过这种体验？读别人写的C语言项目，跟着一个函数跳来跳去，数据传来传去，改一个结构要动十个文件… 感觉自己不是在读代码，而是在走迷宫；<strong>或者</strong>当你自己写一个稍大的程序时，变量越加越多，函数越改越乱，到最后连自己都理不清。这通常不是C语言的错，而是我们被“一步一步来”的面向过程思维框住了。<br><strong>面向对象思想</strong>可以帮助我们把复杂系统拆分成职责清晰的模块，减少函数跳转和全局状态的传播，使代码更易读、可维护并且便于扩展。<br>下面本文将从介绍C语言如何运用<strong>结构体、函数指针</strong>实现面向对象编程的核心理念——<strong>抽象、封装、继承与多态</strong>。</p><h1 id="面向对象的四大基本特性"><a href="#面向对象的四大基本特性" class="headerlink" title="面向对象的四大基本特性"></a>面向对象的四大基本特性</h1><h2 id="抽象"><a href="#抽象" class="headerlink" title="抽象"></a>抽象</h2><p>我们可以对现实存在的各种事物进行抽象，把它封装成一种数据类型——类。<br>无论壁灯、吊灯、吸顶灯，他们都是灯，拥有各自的特点，我们可以将这些共同的东西进行抽象，封装成Lamp这个类。</p><h2 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h2><p>封装则是将灯的属性和方法都封装到一个结构体里。<strong>封装后的结构体就相当于一个类</strong>。</p><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">Lamp</span> &#123;</span></span><br><span class="line">    <span class="type">int</span> on;</span><br><span class="line">    <span class="type">int</span> brightness;</span><br><span class="line">    <span class="comment">/*  self是一个指向当前结构体实例的指针  */</span></span><br><span class="line">    <span class="type">void</span> (*turn_on)(<span class="keyword">struct</span> Lamp *self);</span><br><span class="line">    <span class="type">void</span> (*turn_off)(<span class="keyword">struct</span> Lamp *self);</span><br><span class="line">&#125; Lamp;</span><br></pre></td></tr></table></figure><p>这样我们就得到了我们的Lamp类啦，但是子类想要使用该类的属性和方法该如何继承呢？</p><h2 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h2><p>我们封装一个类的目的就是为了继承，从而实现代码的复用。<br>继承的实现：将基类放在结构体开头来模拟继承。</p><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* &quot;子类&quot;：FlashingLamp */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    Lamp base;</span><br><span class="line">    <span class="type">int</span> freq_ms;</span><br><span class="line">&#125; FlashingLamp;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">lamp_turn_on</span><span class="params">(Lamp *self)</span>   &#123; self-&gt;on = <span class="number">1</span>; <span class="built_in">puts</span>(<span class="string">&quot;Lamp: on&quot;</span>); &#125;</span><br><span class="line"><span class="type">void</span> <span class="title function_">lamp_turn_off</span><span class="params">(Lamp *self)</span> &#123; self-&gt;on = <span class="number">0</span>; <span class="built_in">puts</span>(<span class="string">&quot;Lamp: off&quot;</span>); &#125;</span><br><span class="line"></span><br><span class="line">Lamp *<span class="title function_">Lamp_new</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">    Lamp *l = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(Lamp));</span><br><span class="line">    l-&gt;on = <span class="number">0</span>;</span><br><span class="line">    l-&gt;turn_on = lamp_turn_on;</span><br><span class="line">    l-&gt;turn_off = lamp_turn_off;</span><br><span class="line">    <span class="keyword">return</span> l;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure><p>如代码所示，我们在结构体类型FlashingLamp里面内嵌了结构体类型Lamp，此时FlashingLamp就相当于模拟了一个子类，而Lamp相当于父类。通过这种内嵌就实现了子类<strong>继承</strong>了父类的属性和方法。<br>子类不仅可以直接复用父类中定义的属性和方法，还可以在父类的基础上拓展自己的属性和方法。<br>对于不同的灯我们打开的方式也不一样，所以我们可以在继承的过程中<strong>重新定义父类</strong>。</p><h2 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">flashing_turn_on</span><span class="params">(Lamp *self)</span> &#123;</span><br><span class="line">    <span class="comment">/* 子类覆盖行为 */</span></span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;FlashingLamp: start flashing&quot;</span>);</span><br><span class="line">    self-&gt;on = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">FlashingLamp *<span class="title function_">FlashingLamp_new</span><span class="params">(<span class="type">int</span> freq_ms)</span> &#123;</span><br><span class="line">    FlashingLamp *f = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(FlashingLamp));</span><br><span class="line">    f-&gt;base.on = <span class="number">0</span>;</span><br><span class="line">    f-&gt;base.turn_on = flashing_turn_on; <span class="comment">/* 覆盖方法 */</span></span><br><span class="line">    f-&gt;base.turn_off = lamp_turn_off;</span><br><span class="line">    f-&gt;freq_ms = freq_ms;</span><br><span class="line">    <span class="keyword">return</span> f;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">  Lamp *a = Lamp_new();</span><br><span class="line">  <span class="comment">/*  强制转换成基类指针  */</span></span><br><span class="line">  Lamp *b = (Lamp*)FlashingLamp_new(<span class="number">200</span>);</span><br><span class="line"></span><br><span class="line">  a-&gt;turn_on(a);</span><br><span class="line">  b-&gt;turn_on(b);</span><br><span class="line"></span><br><span class="line">  a-&gt;turn_off(a);</span><br><span class="line">  b-&gt;turn_off(b);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure><p>如上所示，我们通过基类指针去调用子类中的不同实现，就叫作多态。</p>]]></content>
+        <content type="html"><![CDATA[<blockquote><p>建议在阅读本文章之前先阅读以下文章：<br><a href="http://localhost:4000/_posts/59193">程序的编译、链接过程</a></p></blockquote><h1 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h1><ol><li><strong>Flash (ROM&#x2F;Program Memory)</strong>：存储程序代码和常量。</li><li><strong>RAM (Data Memory)</strong>：存储运行时的变量（全局、静态、局部）、堆栈数据。</li><li><strong>链接器脚本 (Linker Script, .ld 文件)</strong>：<br>告诉链接器如何将汇编器生成的各个目标文件中的“段”组合起来，最终映射到物理的 Flash 和 RAM 地址空间。</li><li><strong>启动代码 (Startup Code)</strong>：在 main 函数执行之前运行的初始化代码，负责关键的硬件初始化和最关键的内存初始化（初始化 .data 段，清零 .bss 段，设置堆栈指针）。</li></ol><h1 id="主要的内存段"><a href="#主要的内存段" class="headerlink" title="主要的内存段"></a>主要的内存段</h1><p><img src="/../../img/ARM%E6%9E%B6%E6%9E%84/%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80RAM&ROM.png" alt="各个段在内存中的示意图（箭头代表增长方向）"></p><h2 id="1-text-代码段"><a href="#1-text-代码段" class="headerlink" title="1. .text (代码段)"></a>1. .text (代码段)</h2><p><strong>作用</strong>：存储程序的可执行代码（机器指令）</p><p><strong>存储位置</strong>：Flash (ROM)。因为代码是只读的，并且需要掉电后保留。</p><p><strong>实现</strong>：编译器将 C&#x2F;C++&#x2F;汇编代码编译成机器指令</p><ul><li>汇编器&#x2F;编译器将这些指令放入文件的 .text 段</li><li>链接器根据链接脚本将所有目标文件的 .text 段合并，并定位到 Flash 的起始地址（通常是 0x08000000 或类似地址）</li><li>上电复位后，CPU 从 Flash 的 .text 段中取指令执行</li></ul><h2 id="2-data-已初始化数据段"><a href="#2-data-已初始化数据段" class="headerlink" title="2. .data (已初始化数据段)"></a>2. .data (已初始化数据段)</h2><p><strong>作用</strong>：存储已初始化的全局变量和静态变量（包括函数内部的静态变量）。这些变量在程序开始运行时就有一个明确的非零初始值。</p><p><strong>存储位置</strong>：</p><ul><li>初始值存储在 Flash (ROM)：编译器在编译时知道这些变量的初始值，所以这些初始值被当作常量数据存储</li><li>运行时这些变量会被复制到 RAM 中（由启动代码在 main() 执行前完成）</li></ul><p><strong>实现 (关键点)</strong>：</p><ul><li>编译器为每个已初始化的全局&#x2F;静态变量预留 RAM 空间</li><li>编译器将这些变量的初始值提取出来，放入一个特殊的 .data 段（这个 .data 段最终会放在 Flash 中）</li><li>链接脚本做两件重要的事情：<ol><li>定义 .data 段在 RAM 中的运行时起始地址 (_sdata) 和结束地址 (_edata)</li><li>定义 .data 段的初始值在 Flash 中的存储位置 (_sidata)</li></ol></li><li>启动代码 (核心任务之一)：<ul><li>在 main() 执行前，启动代码负责将 Flash 中 _sidata 地址开始的 .data 段初始值数据，复制到 RAM 中 _sdata 地址开始的区域</li><li>复制长度是 _edata - _sdata</li><li>复制完成后，RAM 中的这些变量就有了程序设定的初始值</li></ul></li></ul><p><strong>关键特性</strong>：需要初始化（非零初始值），占用 Flash (存初始值) 和 RAM (存变量本身) 两种空间。启动时必须从 Flash 复制到 RAM。</p><h2 id="3-bss-未初始化数据段"><a href="#3-bss-未初始化数据段" class="headerlink" title="3. .bss (未初始化数据段)"></a>3. .bss (未初始化数据段)</h2><p><strong>作用</strong>：存储未初始化或显式初始化为 0 的全局变量和静态变量。</p><p><strong>存储位置</strong>：RAM。因为这些变量在程序开始运行时没有有效值（或要求为 0），不需要在 Flash 中存储任何初始数据（除了知道它的大小）。</p><p><strong>实现 (关键点)</strong>：</p><ul><li>编译器为每个未初始化或初始化为 0 的全局&#x2F;静态变量预留 RAM 空间</li><li>编译器将这些变量放入 .bss 段。注意：.bss 段本身在最终的程序镜像（烧写到 Flash 的 .bin&#x2F;.hex 文件）中不占据任何实际字节空间！它只记录需要预留多少 RAM 并将其初始化为 0。</li><li>链接器脚本定义 .bss 段在 RAM 中的起始地址 (_sbss) 和结束地址 (_ebss)</li><li>启动代码 (核心任务之二)：<ul><li>在 main() 执行前，启动代码负责将 RAM 中从 _sbss 到 _ebss 的区域清零</li><li>清零长度是 _ebss - _sbss</li></ul></li></ul><p><strong>关键特性</strong>：初始值为零（或未初始化），只占用 RAM 空间，在 Flash 中不存储实际数据（只记录大小）。启动时必须清零。</p><h2 id="4-rodata-段-只读数据段"><a href="#4-rodata-段-只读数据段" class="headerlink" title="4. .rodata 段 (只读数据段)"></a>4. .rodata 段 (只读数据段)</h2><p><strong>作用</strong>：存储常量数据，程序运行期间不会被修改。</p><p><strong>存储位置</strong>：Flash (ROM)。因为是只读的。</p><p><strong>实现</strong>：</p><ul><li>编译器将常量放入 .rodata 段</li><li>链接器将所有 .rodata 段合并并定位到 Flash 的某个区域（通常在 .text 段之后）</li><li>程序运行时直接从 Flash 中读取这些常量数据。有些单片机架构（如 Harvard）不能直接从 Flash 执行数据访问，可能需要特殊指令或临时复制到 RAM，但 .rodata 本身的目标位置是 Flash</li></ul><p><strong>关键特性</strong>：只读，存储在 Flash，不占用 RAM。CPU 直接（或通过特殊方式）从 Flash 读取。</p><h2 id="5-stack（栈区）"><a href="#5-stack（栈区）" class="headerlink" title="5. stack（栈区）"></a>5. stack（栈区）</h2><p><strong>作用</strong>：</p><ul><li>存储局部变量（非静态）</li><li>存储函数调用时的返回地址</li><li>存储函数参数</li><li>保存函数调用前后的寄存器现场</li></ul><p><strong>存储位置</strong>：RAM。需要快速读写。</p><p><strong>实现</strong>：</p><ul><li>通常由链接脚本定义栈的起始地址（栈顶 _estack，通常是 RAM 的最高地址）和大小</li><li>启动代码 (核心任务之三)：设置栈指针寄存器 (SP) 指向链接脚本定义的栈顶地址 _estack</li><li>运行时由 CPU 硬件自动管理（PUSH&#x2F;POP 指令）。函数调用时，局部变量空间在栈上分配；函数返回时，空间自动释放</li><li>栈通常从高地址向低地址增长</li></ul><h2 id="6-heap（堆区）"><a href="#6-heap（堆区）" class="headerlink" title="6. heap（堆区）"></a>6. heap（堆区）</h2><p><strong>作用</strong>：存储动态分配的内存（通过 malloc(), calloc(), new 等分配）</p><p><strong>存储位置</strong>：RAM。需要动态管理。</p><p><strong>实现</strong>：</p><ul><li>链接脚本定义堆的起始地址（通常是 .bss 段结束之后 _end）和大小（_heap_end - _heap_start）</li><li>通常需要实现一个堆内存管理器（如 malloc&#x2F;free 的实现，可能是 newlib 等 C 库提供的，或自定义的）。这个管理器负责在定义的堆区域内分配和回收内存块</li><li>堆通常从低地址向高地址增长（与栈相反），两者在 RAM 中间区域相遇</li></ul><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><table><thead><tr><th align="left">段名</th><th align="left">存储内容</th><th align="left">主要存储位置</th><th align="left">关键初始化动作(启动代码)</th><th align="left">占用空间类型</th><th align="left">备注</th></tr></thead><tbody><tr><td align="left">.text</td><td align="left">程序代码(指令)</td><td align="left">Flash</td><td align="left">无(CPU直接执行)</td><td align="left">Flash</td><td align="left">只读</td></tr><tr><td align="left">.data</td><td align="left">已初始化的全局&#x2F;静态变量</td><td align="left">RAM</td><td align="left">从Flash复制初始值到RAM</td><td align="left">Flash(值)+RAM(变量)</td><td align="left">启动时必须复制</td></tr><tr><td align="left">.bss</td><td align="left">未初始化的全局&#x2F;静态变量(0)</td><td align="left">RAM</td><td align="left">将RAM区域清零</td><td align="left">RAM</td><td align="left">不占Flash空间，启动时必须清零</td></tr><tr><td align="left">.rodata</td><td align="left">常量数据</td><td align="left">Flash</td><td align="left">无(程序直接从Flash读取)</td><td align="left">Flash</td><td align="left">只读</td></tr><tr><td align="left">stack</td><td align="left">局部变量、返回地址、参数等</td><td align="left">RAM</td><td align="left">设置栈指针(SP)</td><td align="left">RAM</td><td align="left">自动管理，向下增长，溢出危险</td></tr><tr><td align="left">heap</td><td align="left">动态分配的内存</td><td align="left">RAM</td><td align="left">初始化堆管理器(可选)</td><td align="left">RAM</td><td align="left">程序员管理(malloc&#x2F;free)，向上增长，碎片风险</td></tr></tbody></table>]]></content>
       
       
       <categories>
           
-          <category> C语言进阶 </category>
+          <category> ARM架构 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> C语言 </tag>
+            <tag> ARM架构 </tag>
+            
+            <tag> 内存管理 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>几条简单的ARM汇编指令</title>
+      <link href="/_posts/26318/"/>
+      <url>/_posts/26318/</url>
+      
+        <content type="html"><![CDATA[<h1 id="什么是程序"><a href="#什么是程序" class="headerlink" title="什么是程序"></a>什么是程序</h1><p>我认为程序就是</p><ul><li>一段被烧写在flash里面的机器码（指令）（bin文件）</li><li>运行过程中的数据（属于程序里的一部分）</li></ul><p>cpu运行期间会在flash取指令然后执行各种操作。</p><h1 id="程序运行时CPU如何读写内存"><a href="#程序运行时CPU如何读写内存" class="headerlink" title="程序运行时CPU如何读写内存"></a>程序运行时CPU如何读写内存</h1><p>cpu内部有寄存器，R0~R15寄存器<br>读数据是将数据从内存RAM读取到寄存器，写数据是将数据从寄存器写入内存RAM。<br>其中读写操作涉及几条汇编指令：LDR、STR、SUB、ADD、CMP、B、BL、POP、PUSH、LDIMA。<br>下面我们就来介绍一下这些指令。</p><h1 id="ARM汇编简介"><a href="#ARM汇编简介" class="headerlink" title="ARM汇编简介"></a>ARM汇编简介</h1><p>了解汇编指令之前我们了解一下什么是汇编语言：</p><blockquote><p>1985年，ARM公司推出了第一款ARM（Acorn RISC Machine）处理器，采用精简指令集（RISC）设计理念。他们发布了两类指令集：ARM指令集和Thumb指令集。ARM指令集是32位指令，Thumb指令集是16位指令。所以基于ARM架构的CPU可以同时运行ARM指令集和Thumb指令集。<br>那怎么区分当前指令是ARM指令集还是Thumb指令集呢？在程序状态寄存器（CPSR）中，有一个标志位T。当T位为0时，当前指令是ARM指令集；当T位为1时，当前指令是Thumb指令集。<br>但是指令集只是一串二进制代码，我们怎么区分？所以ARM公司推出了Unified Assembly Language（UAL）即统一汇编语言。所以我们只用记住一些简单的指令，在程序前声明THUMB&#x2F;ARM指令集之后就可以编写代码了。</p></blockquote><h2 id="LDR读内存"><a href="#LDR读内存" class="headerlink" title="LDR读内存"></a>LDR读内存</h2><blockquote><p>格式为：LDR 目的寄存器,&lt;内存地址&gt;</p></blockquote><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">LDR  R0,[R1]       ;将内存地址为R1的字数据读入寄存器R0。</span><br><span class="line">LDR  R0,[R1,R2]    ;将内存地址为R1+R2的字数据读入寄存器R0。</span><br><span class="line">LDR  R0,[R1,＃<span class="number">8</span>]   ;将内存地址为R1+<span class="number">8</span>的字数据读入寄存器R0。</span><br><span class="line">LDR  R0,[R1,R2]!   ;将内存地址为R1+R2的字数据读入寄存器R0，并将新地址R1＋R2写入R1。</span><br><span class="line">LDR  R0,[R1,＃<span class="number">8</span>]!  ;将内存地址为R1+<span class="number">8</span>的字数据读入寄存器R0，并将新地址R1＋<span class="number">8</span>写入R1。</span><br><span class="line">LDR  R0,[R1],R2    ;将内存地址为R1的字数据读入寄存器R0，并将新地址R1＋R2写入R1。</span><br><span class="line">*/</span><br></pre></td></tr></table></figure><h3 id="立即数"><a href="#立即数" class="headerlink" title="立即数"></a>立即数</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">MOV R0, #VAL  <span class="comment">//  将立即数VAL加载到寄存器R0中</span></span><br></pre></td></tr></table></figure><p><strong>什么是立即数，val可以是任何数吗？</strong></p><ul><li>立即数是指在指令中直接给出的数值。ARM汇编中用#前缀表示立即数。</li><li>立即数并不是任意 32 位整数，由于 ARM 指令的固定长度（32 位），其中一部分位必须用于表示操作码、目标寄存器等。例如“MOV R0, #VAL”这条指令本身就是16位或者32位指令，哪来的空间保存任意数值的VAL?我们暂且认为立即数满足某种规定。</li></ul><h3 id="LDR伪指令"><a href="#LDR伪指令" class="headerlink" title="LDR伪指令"></a>LDR伪指令</h3><p><strong>但是我就是想将任意数加载到寄存器中，怎么办？</strong><br>这就引出了<strong>LDR伪指令：LDR R0, &#x3D;VAL</strong>。<br>什么是伪指令？伪指令指的就是不存在的指令，只是编译器在编译时将其转换为实际的指令。例如：</p><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">LDR R0, =<span class="number">0X12</span>  </span><br><span class="line"><span class="comment">//  0X12是一个立即数，那么编译器会将其转换为MOV R0, #0X12</span></span><br><span class="line">     </span><br><span class="line">LDR R0, =<span class="number">0X12345678</span> </span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">  0X12345678不是一个立即数</span></span><br><span class="line"><span class="comment">  编译器会将其转换为LDR R0, [PC, #offset]</span></span><br><span class="line"><span class="comment">  其中这个offset在链接的时候会被计算出来</span></span><br><span class="line"><span class="comment">  label DCD 0X12345678  // 在程序的某一个位置存放这个数据</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure><h2 id="写内存STR"><a href="#写内存STR" class="headerlink" title="写内存STR"></a>写内存STR</h2><blockquote><p>格式为：STR 源寄存器,&lt;内存地址&gt;</p></blockquote><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">STR R0,[R1],＃<span class="number">8</span> ;将R0中的字数据写入以R1为地址的存储器中，并将新地址R1＋<span class="number">8</span>写入R1。</span><br><span class="line">STR R0,[R1,＃<span class="number">8</span>] ;将R0中的字数据写入以R1＋<span class="number">8</span>为地址的存储器中。</span><br><span class="line">STR R1,[R0]     ;将R1寄存器的值，传送到以r0为地址的存储器中。</span><br></pre></td></tr></table></figure><h2 id="加减SUB、ADD"><a href="#加减SUB、ADD" class="headerlink" title="加减SUB、ADD"></a>加减SUB、ADD</h2><p>ADD{S} 目的寄存器,操作数1,操作数2：把两个操作数相加，并将结果存放到目的寄存器中。<br>操作数1应是一个寄存器，操作数2可以是一个寄存器、被移位的寄存器，或者一个立即数。</p><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">ADD  R0,R1,R2           ; R0 = R1 + R2</span><br><span class="line">ADD  R0,R1,#<span class="number">256</span>         ; R0 = R1 + <span class="number">256</span></span><br><span class="line">ADD  R0,R2,R3,LSL#<span class="number">1</span>     ; R0 = R2 + (R3 &lt;&lt; <span class="number">1</span>)</span><br><span class="line"> </span><br><span class="line">SUB  R0,R1,R2         ;R0 = R1 - R2</span><br><span class="line">SUB  R0,R1,#<span class="number">256</span>       ;R0 = R1 - <span class="number">256</span></span><br><span class="line">SUB  R0,R2,R3,LSL#<span class="number">1</span>   ;R0 = R2 - (R3 &lt;&lt; <span class="number">1</span>)</span><br></pre></td></tr></table></figure><h2 id="比较CMP"><a href="#比较CMP" class="headerlink" title="比较CMP"></a>比较CMP</h2><p>CMP{条件} 操作数1,操作数2：将一个寄存器的内容和另一个寄存器的内容或立即数进行比较，比较结果放在CPSR中条件标志位的值</p><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">CMP R1,R0     ;将寄存器R1的值与寄存器R0的值相减，并根据结果设置CPSR的标志位</span><br><span class="line">CMP R1,＃<span class="number">100</span>  ;将寄存器R1的值与立即数<span class="number">100</span>相减，并根据结果设置CPSR的标志位</span><br></pre></td></tr></table></figure><h2 id="跳转指令"><a href="#跳转指令" class="headerlink" title="跳转指令"></a>跳转指令</h2><table><thead><tr><th align="left">指令</th><th align="left">功能描述</th><th align="left">应用场景</th><th align="left">对寄存器的影响</th><th align="left">示例</th></tr></thead><tbody><tr><td align="left">B</td><td align="left">实现无条件跳转，跳转值为相对当前PC的偏移量（24位有符号数扩展为32位）</td><td align="left">短距离跳转、循环或条件跳转</td><td align="left">仅改变程序计数器（PC）</td><td align="left"><code>B Label;</code><br><code>CMP R1, #0;</code><br><code>BEQ Label;</code></td></tr><tr><td align="left">BL</td><td align="left">跳转前将下一条指令地址存入链接寄存器LR（R14），便于子程序返回</td><td align="left">子程序调用</td><td align="left">改变PC，将返回地址存入LR</td><td align="left"><code>BL func</code></td></tr><tr><td align="left">BX</td><td align="left">跳转到指定地址，根据目标地址寄存器最低位&#x2F;两位切换处理器状态（1为Thumb，0为ARM）</td><td align="left">ARM与Thumb指令集间切换跳转</td><td align="left">改变PC，切换处理器状态</td><td align="left"><code>BX R0</code></td></tr><tr><td align="left">BLX</td><td align="left">结合BL和BX功能，跳转前存返回地址到LR，并切换处理器状态</td><td align="left">调用Thumb指令集子程序（调用者为ARM指令集）</td><td align="left">改变PC，将返回地址存入LR，切换处理器状态</td><td align="left"><code>BLX R0</code></td></tr></tbody></table><blockquote><p>不了解栈的建议先看这篇博客：<a href="http://localhost:4000/_posts/52059/">内存堆栈管理</a></p></blockquote><h2 id="POP出栈"><a href="#POP出栈" class="headerlink" title="POP出栈"></a>POP出栈</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">内存：</span><br><span class="line"><span class="number">0x2000</span> <span class="number">0294</span> = <span class="number">0x1212</span> <span class="number">1212</span></span><br><span class="line"><span class="number">0x2000</span> <span class="number">0298</span> = <span class="number">0xEFEF</span> EFEF</span><br><span class="line"><span class="number">0x2000</span> <span class="number">029</span>C = <span class="number">0x0000</span> <span class="number">2079</span></span><br><span class="line"><span class="number">0x2000</span> <span class="number">02</span>A0 = <span class="number">0x0100</span> <span class="number">0000</span></span><br><span class="line"></span><br><span class="line">一开始SP指向<span class="number">0x2000</span> <span class="number">0294</span>这个地址</span><br><span class="line">执行指令：POP &#123;R0 -R3&#125; 之后</span><br><span class="line"></span><br><span class="line">R0 = <span class="number">0x1212</span> <span class="number">1212</span></span><br><span class="line">R1 = <span class="number">0xEFEF</span> EFEF</span><br><span class="line">R2 = <span class="number">0x0000</span> <span class="number">2079</span></span><br><span class="line">R3 = <span class="number">0x0100</span> <span class="number">0000</span></span><br><span class="line"></span><br><span class="line">SP指向的位置为: <span class="number">0x2000</span> <span class="number">02</span>A4</span><br></pre></td></tr></table></figure><p>从上面例子可以看出两点</p><ul><li>POP指令会将栈顶的数据弹出，并且SP会指向栈顶的下一个地址</li><li>{R0-R3} 这些高标号的寄存器对应高地址</li><li>出栈的时候SP指针从低地址向高地址移动</li></ul><h2 id="PUSH压栈"><a href="#PUSH压栈" class="headerlink" title="PUSH压栈"></a>PUSH压栈</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">一开始SP指向 <span class="number">0x2000</span> <span class="number">0284</span></span><br><span class="line"></span><br><span class="line">这个时候寄存器的值：</span><br><span class="line">R0 = <span class="number">0x1212</span> <span class="number">1212</span></span><br><span class="line">R1 = <span class="number">0x0000</span> <span class="number">1B</span>C3</span><br><span class="line">R2 = <span class="number">0x0000</span> <span class="number">1B</span>C3</span><br><span class="line">R3 = <span class="number">0x0000</span> <span class="number">0000</span></span><br><span class="line"></span><br><span class="line">执行指令 PUSH &#123;R0 - R3&#125; 之后，</span><br><span class="line"></span><br><span class="line">内存地址：</span><br><span class="line"><span class="number">0x2000</span> <span class="number">0274</span>的值为: <span class="number">0x1212</span> <span class="number">1212</span> --------- R0</span><br><span class="line"><span class="number">0x2000</span> <span class="number">0278</span>的值为: <span class="number">0x0000</span> <span class="number">1B</span>C3 --------- R1</span><br><span class="line"><span class="number">0x2000</span> <span class="number">027</span>C的值为: <span class="number">0x0000</span> <span class="number">1B</span>C3 --------- R2</span><br><span class="line"><span class="number">0x2000</span> <span class="number">0280</span>的值为: <span class="number">0x0000</span> <span class="number">0000</span> --------- R3</span><br><span class="line"></span><br><span class="line">执行之后 堆栈指针，指向的地址为: <span class="number">0x2000</span> <span class="number">0274</span></span><br></pre></td></tr></table></figure><p>从上面例子可以看出两点</p><ul><li>PUSH指令会将寄存器中的数据压栈，并且SP会指向栈顶的下一个地址</li><li>{R0-R3} 这些高标号的寄存器对应高地址</li><li>入栈的时候SP指针从高地址向低地址移动</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> ARM架构 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> ARM架构 </tag>
+            
+            <tag> 汇编 </tag>
             
         </tags>
       
@@ -642,65 +719,9 @@
     
     
     <entry>
-      <title>编译过程</title>
-      <link href="/_posts/17/"/>
-      <url>/_posts/17/</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-      
-      <categories>
-          
-          <category> ARM架构 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> ARM架构 </tag>
-            
-            <tag> 编译 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>RTOS内核分析-前置知识</title>
-      <link href="/_posts/37837/"/>
-      <url>/_posts/37837/</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-      
-      <categories>
-          
-          <category> ARM架构 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> ARM架构 </tag>
-            
-            <tag> FreeRTOS </tag>
-            
-            <tag> RTOS </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>FreerRTOS的中断机制</title>
-      <link href="/_posts/6/"/>
-      <url>/_posts/6/</url>
+      <title>FreerRTOS的任务管理</title>
+      <link href="/_posts/5/"/>
+      <url>/_posts/5/</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -723,9 +744,9 @@
     
     
     <entry>
-      <title>FreerRTOS的任务管理</title>
-      <link href="/_posts/5/"/>
-      <url>/_posts/5/</url>
+      <title>FreerRTOS的中断机制</title>
+      <link href="/_posts/6/"/>
+      <url>/_posts/6/</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -790,6 +811,60 @@
         <tags>
             
             <tag> FreeRTOS </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>FreeRTOS内核开发</title>
+      <link href="/_posts/17/"/>
+      <url>/_posts/17/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      <categories>
+          
+          <category> FreeRTOS </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> FreeRTOS </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>RTOS内核分析-前置知识</title>
+      <link href="/_posts/37837/"/>
+      <url>/_posts/37837/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      <categories>
+          
+          <category> ARM架构 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> ARM架构 </tag>
+            
+            <tag> FreeRTOS </tag>
+            
+            <tag> RTOS </tag>
             
         </tags>
       
